@@ -20,8 +20,8 @@ router.use('/', function(req, res, next) {
 });
 
 router.get('/', function(req, res, next) {
-  Task.find()
-    .exec(function(err, tasks) {
+  Game.find()
+    .exec(function(err, games) {
       if (err) {
         return res.status(500).json({
           title: 'An error occured',
@@ -31,7 +31,7 @@ router.get('/', function(req, res, next) {
 
       res.status(200).json({
         message: 'Success',
-        obj: tasks
+        obj: games
       });
     });
 });
@@ -46,11 +46,12 @@ router.post('/', function(req, res, next) {
       });
     }
 
-    var task = new Task({
-      name: req.body.name,
-      user: user
+    var game = new Game({
+      points: req.body.points,
+      user: user,
+      created: Date.now()
     });
-    task.save(function(err, result) {
+    game.save(function(err, result) {
       if (err) {
         return res.status(500).json({
           title: 'An error occured',
@@ -58,11 +59,11 @@ router.post('/', function(req, res, next) {
         });
       }
 
-      user.tasks.push(result);
+      user.games.push(result);
       user.save();
 
       res.status(201).json({
-        message: 'Saved task',
+        message: 'Saved game',
         obj: result
       });
     });
@@ -70,7 +71,7 @@ router.post('/', function(req, res, next) {
 });
 
 router.patch('/:id', function(req, res, next) {
-  Task.findById(req.params.id, function(err, task) {
+  Game.findById(req.params.id, function(err, game) {
     if (err) {
       return res.status(500).json({
         title: 'An error occured',
@@ -78,17 +79,17 @@ router.patch('/:id', function(req, res, next) {
       });
     }
 
-    if (!task) {
+    if (!game) {
       return res.status(500).json({
-        title: 'No task found',
+        title: 'No game found',
         error: {
-          message: 'Task not found'
+          message: 'Game not found'
         }
       });
     }
 
-    task.name = req.body.name;
-    task.save(function(err, result) {
+    game.name = req.body.name;
+    game.save(function(err, result) {
       if (err) {
         return res.status(500).json({
           title: 'An error occured',
@@ -97,7 +98,7 @@ router.patch('/:id', function(req, res, next) {
       }
 
       res.status(200).json({
-        message: 'Updated task',
+        message: 'Updated game',
         obj: result
       });
     });
@@ -105,7 +106,7 @@ router.patch('/:id', function(req, res, next) {
 });
 
 router.delete('/:id', function(req, res, next) {
-  Task.findById(req.params.id, function(err, task) {
+  Game.findById(req.params.id, function(err, game) {
     if (err) {
       return res.status(500).json({
         title: 'An error occured',
@@ -113,17 +114,17 @@ router.delete('/:id', function(req, res, next) {
       });
     }
 
-    if (!task) {
+    if (!game) {
       return res.status(500).json({
-        title: 'No task found',
+        title: 'No game found',
         error: {
-          message: 'Task not found'
+          message: 'Game not found'
         }
       });
     }
 
-    task.name = req.body.name;
-    task.remove(function(err, result) {
+    game.name = req.body.name;
+    game.remove(function(err, result) {
       if (err) {
         return res.status(500).json({
           title: 'An error occured',
@@ -132,7 +133,7 @@ router.delete('/:id', function(req, res, next) {
       }
 
       res.status(200).json({
-        message: 'Removed task',
+        message: 'Removed game',
         obj: result
       });
     });

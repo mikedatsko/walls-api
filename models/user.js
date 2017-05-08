@@ -23,7 +23,16 @@ var schema = new Schema({
   games: [{
     type: Schema.Types.ObjectId,
     ref: 'Game'
-  }]
+  }],
+  created: {
+    type: Date,
+    default: Date.now()
+  },
+  points: {
+    type: Number,
+    required: true,
+    default: 0
+  }
 });
 
 schema.plugin(mongooseUniqueValidator);

@@ -12,7 +12,7 @@ var schema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  datetime: {
+  created: {
     type : Date,
     default: Date.now
   }
