@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "PORT=8000 node ./bin/www",
+    "start": "PORT=8888 node ./bin/www",
+    "start:dev": "PORT=8888 nodemon ./bin/www",
     "watch": "concurrently \"npm run start\" \"npm run watch:build\"",
     "watch:build": "del-cli public/js/app && webpack --config webpack.config.dev.js --progress --profile --watch",
     "build:prod": "del-cli public/js/app && ngc -p tsconfig.aot.json && ngc -p tsconfig.aot.json && webpack --config webpack.config.prod.js --progress --profile --bail && del-cli 'public/js/app/**/*.js' 'public/js/app/**/*.js.map' '!public/js/app/bundle.js' '!public/js/app/*.chunk.js' 'assets/app/**/*.ngfactory.ts' 'assets/app/**/*.shim.ts'"
@@ -46,6 +47,7 @@
     "del-cli": "^0.2.0",
     "html-loader": "^0.4.4",
     "ng2-logger": "^0.1.21",
+    "nodemon": "^1.11.0",
     "raw-loader": "^0.5.1",
     "typescript": "^2.1.1",
     "webpack": "^2.1.0-beta.21",

@@ -191,4 +191,59 @@ router.get('/leaders', function (req, res, next) {
     });
 });
 
+router.get('/place', function (req, res, next) {
+  var decoded = jwt.decode(req.query.token);
+
+  if (decoded === null) {
+    return res.status(401).json({
+      title: 'Not authenticated',
+      error: {
+        message: 'Could not found user\'s authentication record'
+      }
+    });
+  }
+
+  User.findById(decoded.user._id, function(err, user) {
+    if (err) {
+      return res.status(500).json({
+        title: 'An error occured',
+        error: err
+      });
+    }
+
+    if (!user) {
+      return res.status(500).json({
+        title: 'No user found',
+        error: {
+          message: 'User not found'
+        }
+      });
+    }
+
+    User.find({'points': { '$gt' : user.points}})
+      .count()
+      .exec(function(err, place) {
+        if (err) {
+          return res.status(500).json({
+            title: 'An error occured',
+            error: err
+          });
+        }
+
+        if (typeof place === 'undefined' || place === null) {
+          return res.status(500).json({
+            title: 'No place found',
+            error: {
+              message: 'Place not found'
+            }
+          });
+        }
+
+        res.status(200).json({
+          message: (place + 1)
+        });
+      });
+  });
+});
+
 module.exports = router;
