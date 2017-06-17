@@ -5,11 +5,11 @@ var Schema = mongoose.Schema;
 var schema = new Schema({
   firstName: {
     type: String,
-    required: true
+    required: false
   },
   lastName: {
     type: String,
-    required: true
+    required: false
   },
   password: {
     type: String,
@@ -23,6 +23,10 @@ var schema = new Schema({
   games: [{
     type: Schema.Types.ObjectId,
     ref: 'Game'
+  }],
+  device: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Device'
   }],
   created: {
     type: Date,
