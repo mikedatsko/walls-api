@@ -145,7 +145,7 @@ router.get('/list', function (req, res, next) {
           error: err
         });
       }
-      
+
       res.status(200).json({
         message: users,
         // token: token,
@@ -189,7 +189,7 @@ router.get('/leaders', function (req, res, next) {
           error: err
         });
       }
-      
+
       res.status(200).json({
         message: {
           users: users,
@@ -288,6 +288,7 @@ router.get('/place', function (req, res, next) {
 });
 
 router.get('/device', getDevice);
+router.get('/name', getName);
 
 function getDevice(req, res, next) {
   var deviceId = req.query.deviceId;
@@ -331,6 +332,26 @@ function getDevice(req, res, next) {
     });
 }
 
+function getName(req, res, next) {
+  var userName = req.query.userName;
+
+  User.find({'firstName': userName})
+    .exec(function(err, user) {
+      if (err) {
+        return res.status(500).json({
+          title: 'An error occured',
+          error: err
+        });
+      }
+
+      res.status(200).json({
+        message: {
+          isUserExist: user && user.length
+        }
+      });
+    });
+}
+
 function addUser(deviceId, callback) {
   User.find({'email': deviceId + '@datsko.it'})
     .exec(function(err, user) {
@@ -343,7 +364,7 @@ function addUser(deviceId, callback) {
 
       if (!user || !user.length) {
         var user = new User({
-          firstName: '',
+          firstName: deviceId,
           lastName: '',
           email: deviceId + '@datsko.it',
           password: bcrypt.hashSync('123456', 10),
@@ -372,7 +393,8 @@ function addDevice(deviceId, user, callback) {
 
   var device = new Device({
     deviceId: deviceId,
-    user: user
+    user: user,
+    created: new Date()
   });
 
   device.save(function(err, result) {
@@ -394,14 +416,14 @@ function signIn(req, res, next) {
 
   User.find({email: req.body.email}, function(err, user) {
     if (err) {
-      return callback(500, {
+      return res.status(500).json({
         title: 'An error occured',
         error: err
       });
     }
 
     if (!user || !user.length) {
-      return callback(404, {
+      return res.status(404).json({
         title: 'No user found',
         error: {
           message: 'User could not be found'
@@ -420,7 +442,7 @@ function signIn(req, res, next) {
 
     var token = jwt.sign({user: user}, tokens.authSecret, {expiresIn: 3000000});
 
-    callback(201, {
+    res.status(201).json({
       message: 'User login success',
       token: token,
       userId: user._id
